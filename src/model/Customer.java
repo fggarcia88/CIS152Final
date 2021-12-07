@@ -24,20 +24,21 @@ import java.util.Queue;
  * @version
  */
 
-public class Customer implements Comparable<Customer>{
+public class Customer {
 	private String firstName;
 	private String lastName;
 	private String address;
-	private int priority;
+	private int customerId;	
+	private static int currentId = 1;
 	
 	public Customer() {}
 	
-	public Customer(String firstName, String lastName, String address, int priority) {
+	public Customer(String firstName, String lastName, String address) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.address = address;
-		this.priority = priority;
+		setCustomerId(currentId++);
 	}
 
 	/**
@@ -81,33 +82,27 @@ public class Customer implements Comparable<Customer>{
 	public void setAddress(String address) {
 		this.address = address;
 	}	
-	
+
 	/**
-	 * @return the priority
+	 * @return the customerId
 	 */
-	public int getPriority() {
-		return priority;
+	public int getCustomerId() {
+		return customerId;
 	}
 
 	/**
-	 * @param priority the priority to set
+	 * @param customerId the customerId to set
 	 */
-	public void setPriority(int priority) {
-		this.priority = priority;
+	public void setCustomerId(int currentId) {
+		this.customerId = currentId;
 	}
 
 	@Override
 	public String toString() {
-		return firstName + " " + lastName + "\n" + address + "\n priority="
-				+ priority;
+		return "Customer ID: " + customerId + "\n" + firstName + " " + lastName + "\n" + address;
 	}
 
-	// Compare priority using implement for Customer class for Priority Queue
-	@Override
-	public int compareTo(Customer o) {
-		// TODO Auto-generated method stub
-		return o.priority < this.priority? 1: -1;
-	}
+
 
 
 }

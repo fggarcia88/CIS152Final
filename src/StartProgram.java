@@ -1,7 +1,9 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
-import view.CustomerPanel;
+import view.AdminPanel;
+import view.MainPanel;
 
 /**************************************************************
 * Name        : Final
@@ -31,11 +33,17 @@ public class StartProgram {
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		CustomerPanel panel = new CustomerPanel();
+		MainPanel panelMain = new MainPanel();
+		AdminPanel panelAdmin = new AdminPanel();		
+		JTabbedPane tabbedPane = new JTabbedPane();
 		
-		frame.add(panel);
+		tabbedPane.add("Main",panelMain);  
+		tabbedPane.add("Admin",panelAdmin);  
+
+		frame.add(tabbedPane);  
 		
-		frame.setSize(325,300);
+		
+		frame.setSize(325,355);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}

@@ -1,6 +1,7 @@
 package view;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import javax.swing.JButton;
@@ -13,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import model.Customer;
+import model.PriorityList;
 
 /**************************************************************
 * Name        : Final
@@ -38,9 +40,15 @@ import model.Customer;
  * @version
  */
 
-public class CustomerPanel extends JPanel{
-	PriorityQueue<Customer> customerList = new PriorityQueue<Customer>();
-	String priorityList[] = {"1","2","3"};
+public class MainPanel extends JPanel{
+	static LinkedList<Customer> customerList = new LinkedList<Customer>();
+	static PriorityQueue<PriorityList> customerPriorityList = new PriorityQueue<PriorityList>();
+	static String priorityList[] = {"1","2","3"};
+	
+	private JLabel nextCustomerLabel = new JLabel("-------------------Next Delivery-------------------");
+	private static JTextArea mainViewInfo = new JTextArea(5,25);
+	
+	private static JLabel deliveriesLeft = new JLabel("-------------------No deliveries in queue.-------------------");
 	
 	private	JLabel firstNameLabel = new JLabel("First Name:");
 	private JTextField firstNameField = new JTextField(20);
@@ -57,11 +65,21 @@ public class CustomerPanel extends JPanel{
 	private JButton submitButton = new JButton("Submit");
 	private JButton clearButton = new JButton("Clear");
 	
-	private JLabel nextCustomerLabel = new JLabel("-------------------Next Delivery-------------------");
-	private JLabel blankLine = new JLabel("                   ");
-	private JTextArea nextCustomerInfo = new JTextArea(5,20);
+
 	
-	public CustomerPanel() {
+	private JButton deliveredButton = new JButton("Delivery Complete");
+	
+	
+	public MainPanel() {
+		
+		add(nextCustomerLabel);
+		add(mainViewInfo);
+		
+		DeliveredButtonListener deliveredButtonListener = new DeliveredButtonListener();
+		deliveredButton.addActionListener(deliveredButtonListener);		
+		add(deliveredButton);
+		
+		add(deliveriesLeft);
 		
 		add(firstNameLabel);
 		add(firstNameField);
@@ -82,19 +100,11 @@ public class CustomerPanel extends JPanel{
 		ClearButtonListener clearButtonListener = new ClearButtonListener();
 		clearButton.addActionListener(clearButtonListener);		
 		add(clearButton);
-		
-		add(nextCustomerLabel);
-		add(nextCustomerInfo);
-		
-
-//		WithdrawClickListener w = new WithdrawClickListener();
-//		withdrawButton.addActionListener(w);		
 	}
 	
 	class SubmitButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
 			// TryCatch will handle input validation in case of bad user input.
 			try {
 				String firstName = firstNameField.getText();
@@ -102,11 +112,13 @@ public class CustomerPanel extends JPanel{
 				String address = addressField.getText();				
 				int priority = Integer.parseInt((String)priorityField.getSelectedItem());
 				// Construct object with user input
-				Customer c = new Customer(firstName, lastName, address, priority);
+				Customer c = new Customer(firstName, lastName, address);
 				customerList.add(c);
-				popUp(firstName, lastName);
-				// customerPriorityList.remove().getCustomerDetails()
-				updateNextCustomer();
+				PriorityList p = new PriorityList(c, priority);
+				customerPriorityList.add(p);
+//				popUp(firstName, lastName);
+				updateMainView();
+				AdminPanel.updateAdminView(AdminPanel.listPosition);
 				clearFields();
 			// Clear fields if NumberFormatException 
 			} catch (NumberFormatException ex) {
@@ -124,6 +136,26 @@ public class CustomerPanel extends JPanel{
 		}		
 	}
 	
+	class DeliveredButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			try {
+				PriorityList p = customerPriorityList.remove();
+				Customer c = p.customer;
+				customerList.remove(c);
+				updateMainView();
+				
+			} catch (NullPointerException ex) {
+				mainViewInfo.setText("");
+				deliveriesLeft.setText("-------------No deliveries in queue.-------------");
+			} catch (java.util.NoSuchElementException ex) {
+				mainViewInfo.setText("");
+			}
+			
+		}		
+	}
+	
 	public void popUp(String firstName, String lastName) {
 		JOptionPane.showMessageDialog(null, firstName + " " + lastName + " added to customer list.", "Alert", JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -135,8 +167,20 @@ public class CustomerPanel extends JPanel{
 		priorityField.setSelectedItem("");
 	}
 	
-	public void updateNextCustomer() {
-		nextCustomerInfo.setText(customerList.peek().toString());
+	public static void clearMainView() {
+		mainViewInfo.setText("");
+		
+	}
+	
+	public static void updateMainView() {
+		if (customerList.isEmpty()) {
+			clearMainView();
+			AdminPanel.clearAdminView();
+			deliveriesLeft.setText("-------------------No deliveries in queue.-------------------");
+			return;
+		}
+		mainViewInfo.setText(customerPriorityList.peek().customer.toString() + customerPriorityList.peek().getPriority());
+		deliveriesLeft.setText("-------------------Deliveries left: " + customerPriorityList.size() + "-------------------");
 	}
 
 }
