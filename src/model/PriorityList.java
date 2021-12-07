@@ -61,6 +61,14 @@ public class PriorityList implements Comparable<PriorityList>{
 	public String getPriority() {
 		return "\nPriority level: " + this.priority;
 	}
+	
+	/**
+	 * @return the priority
+	 */
+	public String getPriorityValue() {
+		String s = String.valueOf(priority);
+		return s;
+	}
 
 	/**
 	 * @param priority the priority to set

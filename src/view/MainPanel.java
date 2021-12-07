@@ -65,8 +65,6 @@ public class MainPanel extends JPanel{
 	private JButton submitButton = new JButton("Submit");
 	private JButton clearButton = new JButton("Clear");
 	
-
-	
 	private JButton deliveredButton = new JButton("Delivery Complete");
 	
 	
@@ -105,24 +103,20 @@ public class MainPanel extends JPanel{
 	class SubmitButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TryCatch will handle input validation in case of bad user input.
 			try {
 				String firstName = firstNameField.getText();
 				String lastName = lastNameField.getText();
 				String address = addressField.getText();				
 				int priority = Integer.parseInt((String)priorityField.getSelectedItem());
-				// Construct object with user input
 				Customer c = new Customer(firstName, lastName, address);
 				customerList.add(c);
 				PriorityList p = new PriorityList(c, priority);
 				customerPriorityList.add(p);
-//				popUp(firstName, lastName);
 				updateMainView();
-				AdminPanel.updateAdminView(AdminPanel.listPosition);
-				clearFields();
-			// Clear fields if NumberFormatException 
+				AdminPanel.updateAdminView();
+				clearMainFields();
 			} catch (NumberFormatException ex) {
-				clearFields();
+				clearMainFields();
 			}			
 		}		
 	}
@@ -131,8 +125,7 @@ public class MainPanel extends JPanel{
 		@Override
 		// Clear button will clear all fields and reset program
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			clearFields();
+			clearMainFields();
 		}		
 	}
 	
@@ -144,23 +137,26 @@ public class MainPanel extends JPanel{
 				PriorityList p = customerPriorityList.remove();
 				Customer c = p.customer;
 				customerList.remove(c);
+				customerPriorityList.remove(p);
 				updateMainView();
-				
+				if (customerPriorityList.isEmpty()) {
+					AdminPanel.clearAdminFields();
+					popUp();
+				}
 			} catch (NullPointerException ex) {
 				mainViewInfo.setText("");
 				deliveriesLeft.setText("-------------No deliveries in queue.-------------");
 			} catch (java.util.NoSuchElementException ex) {
 				mainViewInfo.setText("");
-			}
-			
+			}			
 		}		
 	}
 	
-	public void popUp(String firstName, String lastName) {
-		JOptionPane.showMessageDialog(null, firstName + " " + lastName + " added to customer list.", "Alert", JOptionPane.INFORMATION_MESSAGE);
+	public void popUp() {
+		JOptionPane.showMessageDialog(null, "All Deliveries Complete!", "Alert", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	public void clearFields() {
+	public void clearMainFields() {
 		firstNameField.setText("");
 		lastNameField.setText("");
 		addressField.setText("");

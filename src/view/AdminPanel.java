@@ -51,8 +51,8 @@ public class AdminPanel extends JPanel{
 	private JLabel adminViewLabel = new JLabel("-------------------Admin View-------------------");
 	private static JTextArea adminViewInfo = new JTextArea(5,25);
 	
-	private JLabel editLabel = new JLabel("------------------------Edit Value------------------------");
-	private static JLabel positionLabel = new JLabel("------------------------List Position: " + listPosition +"------------------------");
+	private JLabel editLabel = new JLabel("------------------------Edit Values------------------------");
+//	private static JLabel positionLabel = new JLabel("------------------------List Position: " + listPosition +"------------------------");
 	
 	private	JLabel firstNameLabel = new JLabel("First Name:");
 	private static JTextField firstNameField = new JTextField(20);
@@ -85,7 +85,7 @@ public class AdminPanel extends JPanel{
 		add(deleteButton);
 		
 		add(editLabel);
-		add(positionLabel);
+//		add(positionLabel);
 		
 		add(firstNameLabel);
 		add(firstNameField);
@@ -110,10 +110,8 @@ public class AdminPanel extends JPanel{
 			// TryCatch will handle input validation in case of bad user input.			
 			try {
 				listPosition++;
-				updateAdminView(listPosition);
-//				updateEditFields(listPosition);
-				updateListPositionField();
-				
+				updateAdminView();
+//				updateListPositionField();				
 			// Clear fields if NumberFormatException 
 			} catch (IndexOutOfBoundsException ex) {
 				listPosition--;
@@ -127,10 +125,8 @@ public class AdminPanel extends JPanel{
 			// TryCatch will handle input validation in case of bad user input.
 			try {
 				listPosition--;
-				updateAdminView(listPosition);
-//				updateEditFields(listPosition);
-				updateListPositionField();
-				
+				updateAdminView();
+//				updateListPositionField();				
 			// Clear fields if NumberFormatException 
 			} catch (IndexOutOfBoundsException ex) {
 				listPosition++;
@@ -146,21 +142,20 @@ public class AdminPanel extends JPanel{
 			try {
 				if (listPosition == 0) {
 					deleteCustomerListNext();
-					System.out.println("Min List");
 					return;
 				}
-				if (listPosition + 1 == MainPanel.customerList.size()) {
+				else if (listPosition + 1 == MainPanel.customerList.size()) {
 					deleteCustomerListPrev();
-					System.out.println("Max List");
 					return;
 				}
-				deleteCustomerList();				
+				deleteCustomerEntry();				
 			// Clear fields if NumberFormatException 
 			} catch (IndexOutOfBoundsException ex) {
-					listPosition--;
+					listPosition = 0;
+					deleteCustomerEntry();
 					adminViewInfo.setText("");
 					MainPanel.updateMainView();
-					clearFields();
+					clearAdminFields();
 			}
 		}		
 	}
@@ -169,40 +164,35 @@ public class AdminPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TryCatch will handle input validation in case of bad user input.
-			try {
-				String firstName = firstNameField.getText();
-				String lastName = lastNameField.getText();
-				String address = addressField.getText();				
-				int priority = Integer.parseInt((String)priorityField.getSelectedItem());
-				MainPanel.customerList.get(listPosition).setFirstName(firstName);
-				MainPanel.customerList.get(listPosition).setLastName(lastName);
-				MainPanel.customerList.get(listPosition).setAddress(address);
-				
-				
-			// Clear fields if NumberFormatException 
-			} catch (NumberFormatException ex) {
-				//TODO
-			}			
+			Customer c = MainPanel.customerList.get(listPosition);				
+			PriorityList p = findPriorityListCustomer(c);			
+			c.setFirstName(firstNameField.getText());
+			c.setLastName(lastNameField.getText());
+			c.setAddress(addressField.getText());
+			MainPanel.customerPriorityList.remove(p);				
+			p.setPriority(Integer.parseInt((String)priorityField.getSelectedItem()));
+			MainPanel.customerPriorityList.add(p);
+			MainPanel.updateMainView();
+			updateAdminView();			
 		}		
 	}
 	
 	public static void deleteCustomerListNext() {
 		listPosition++;		
-		updateAdminView(listPosition);
 		MainPanel.updateMainView();
-		updateListPositionField();
-		listPosition = 0;
+		updateAdminView();
+//		updateListPositionField();
+		listPosition--;
 		deleteCustomerEntry();
-		updateListPositionField();
+//		updateListPositionField();
 		MainPanel.updateMainView();
-
 	}
 	
 	public static void deleteCustomerListPrev() {
-		listPosition--;		
-		updateAdminView(listPosition);
+		listPosition--;
 		MainPanel.updateMainView();
-		updateListPositionField();
+		updateAdminView();		
+//		updateListPositionField();
 		listPosition++;
 		deleteCustomerEntry();
 		MainPanel.updateMainView();
@@ -211,72 +201,46 @@ public class AdminPanel extends JPanel{
 	
 	public static void deleteCustomerEntry() {
 		try {
-			Customer c = MainPanel.customerList.get(listPosition);
-			
-			PriorityList p = new PriorityList();
-			for (PriorityList o : MainPanel.customerPriorityList) {
-				if (c.equals(o.customer)) {
-					p = o;
-				}
-			}
+			Customer c = MainPanel.customerList.get(listPosition);			
+			PriorityList p = findPriorityListCustomer(c);
 			MainPanel.customerPriorityList.remove(p);
-			MainPanel.customerList.remove(c);
-			
+			MainPanel.customerList.remove(c);			
 		// Clear fields if NumberFormatException 
 		} catch (IndexOutOfBoundsException ex) {
-				listPosition--;
-				adminViewInfo.setText("");
-				MainPanel.updateMainView();
-				clearFields();
-		}
-	}
-	
-	public static void deleteCustomerList() {
-		try {
-			Customer c = MainPanel.customerList.get(listPosition);
-			
-			PriorityList p = new PriorityList();
-			for (PriorityList o : MainPanel.customerPriorityList) {
-				if (c.equals(o.customer)) {
-					p = o;
-				}
-			}
-			MainPanel.customerPriorityList.remove(p);
-			MainPanel.customerList.remove(c);
-			updateAdminView(listPosition);
+			listPosition--;
+			adminViewInfo.setText("");
 			MainPanel.updateMainView();
-//			updateEditFields(listPosition);
-			updateListPositionField();
-			
-		// Clear fields if NumberFormatException 
-		} catch (IndexOutOfBoundsException ex) {
-				listPosition--;
-				adminViewInfo.setText("");
-				MainPanel.updateMainView();
-				clearFields();
+			clearAdminFields();
 		}
 	}
 	
-	public static void updateAdminView(int p) {
-		adminViewInfo.setText(MainPanel.customerList.get(p).toString());
-		firstNameField.setText(MainPanel.customerList.get(p).getFirstName());
-		lastNameField.setText(MainPanel.customerList.get(p).getLastName());
-		addressField.setText(MainPanel.customerList.get(p).getAddress());
-		priorityField.setSelectedItem(MainPanel.customerList.get(p).getFirstName());
+	public static void updateAdminView() {
+		
+		Customer c = MainPanel.customerList.get(listPosition);		
+		PriorityList p = findPriorityListCustomer(c);
+		
+		adminViewInfo.setText(MainPanel.customerList.get(listPosition).toString() + p.getPriority());
+		firstNameField.setText(MainPanel.customerList.get(listPosition).getFirstName());
+		lastNameField.setText(MainPanel.customerList.get(listPosition).getLastName());
+		addressField.setText(MainPanel.customerList.get(listPosition).getAddress());
+		priorityField.setSelectedItem(p.getPriorityValue());
 	}
-	
-//	public static void updateEditFields(int p) {
-//		firstNameField.setText(MainPanel.customerList.get(p).getFirstName());
-//		lastNameField.setText(MainPanel.customerList.get(p).getLastName());
-//		addressField.setText(MainPanel.customerList.get(p).getAddress());
-//		priorityField.setSelectedItem(MainPanel.customerList.get(p).getFirstName());
+	// Helper function used with program troubleshooting. Method not implemented in main release
+//	public static void updateListPositionField() {
+//		positionLabel.setText("------------------------List Position: " + listPosition +"------------------------");
 //	}
 	
-	public static void updateListPositionField() {
-		positionLabel.setText("------------------------List Position: " + listPosition +"------------------------");
+	public static PriorityList findPriorityListCustomer (Customer c) {
+		PriorityList p = new PriorityList();
+		for (PriorityList i : MainPanel.customerPriorityList) {
+			if (c.equals(i.customer)) {
+				p = i;
+			}
+		}
+		return p;
 	}
 	
-	public static void clearFields() {
+	public static void clearAdminFields() {
 		firstNameField.setText("");
 		lastNameField.setText("");
 		addressField.setText("");
