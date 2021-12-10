@@ -1,38 +1,24 @@
 package model;
-/**************************************************************
-* Name        : Final
-* Author      : Fernando Garcia
-* Created     : Dec 3, 2021
-* Course      : CIS 152 Data Structures
-* Version     : 1.0
-* OS          : Windows 10
-* Copyright   : This is my own original work based on
-*               specifications issued by our instructor
-* Description : This program overall description here
-*               Input:  list and describe
-*               Output: list and describe
-* Academic Honesty: I attest that this is my original work.
-* I have not used unauthorized source code, either modified or 
-* unmodified. I have not given other fellow student(s) access to
-* my program.         
-***************************************************************/
-import java.util.LinkedList;
-import java.util.Queue;
+
 /**
- * Describe the class
+ * Customer class holds user information
  * @author Fernando Garcia
- * @version
+ * @version 1.0
  */
 
 public class Customer {
+	// Variables for class
 	private String firstName;
 	private String lastName;
 	private String address;
-	private int customerId;	
+	private int customerId;
+	// Variable to assign a unique ID to customer
 	private static int currentId = 1;
-	
+	// Default no arg-constructor
 	public Customer() {}
-	
+	/**
+	 * Used when adding entries to LinkedList
+	 */
 	public Customer(String firstName, String lastName, String address) {
 		super();
 		this.firstName = firstName;
@@ -49,7 +35,7 @@ public class Customer {
 	}
 
 	/**
-	 * @param firstName the firstName to set
+	 * @param firstName to set
 	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -63,7 +49,7 @@ public class Customer {
 	}
 
 	/**
-	 * @param lastName the lastName to set
+	 * @param lastName to set
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
@@ -77,7 +63,7 @@ public class Customer {
 	}
 
 	/**
-	 * @param address the address to set
+	 * @param address to set
 	 */
 	public void setAddress(String address) {
 		this.address = address;
@@ -91,12 +77,13 @@ public class Customer {
 	}
 
 	/**
-	 * @param customerId the customerId to set
+	 * @param customerId to set
 	 */
 	public void setCustomerId(int currentId) {
 		this.customerId = currentId;
 	}
-
+	
+	// Helper function to get customer values and output into views
 	@Override
 	public String toString() {
 		return "Customer ID: " + customerId + "\n" + firstName + " " + lastName + "\n" + address;

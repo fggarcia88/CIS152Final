@@ -1,42 +1,24 @@
-/**************************************************************
-* Name        : CIS152Final
-* Author      : Fernando Garcia
-* Created     : Dec 5, 2021
-* Course      : CIS 152 Data Structures
-* Version     : 1.0
-* OS          : Windows 10
-* Copyright   : This is my own original work based on
-*               specifications issued by our instructor
-* Description : This program overall description here
-*               Input:  list and describe
-*               Output: list and describe
-* Academic Honesty: I attest that this is my original work.
-* I have not used unauthorized source code, either modified or 
-* unmodified. I have not given other fellow student(s) access to
-* my program.         
-***************************************************************/
-
 package model;
 
 /**
- * Describe the class
+ * PriorityList class holds customer object and priority for PriorityQueue data structure
  * @author Fernando Garcia
- * @version
+ * @version 1.0
  */
 
 public class PriorityList implements Comparable<PriorityList>{
+	// Variables for class
 	public Customer customer;
 	private int priority;
-	
+	// Default no arg-constructor
 	public PriorityList () {}
 
 	/**
 	 * @param customer
 	 * @param priority
-	 * Describe default constructor
+	 * Used when adding entries to PriorityQueue
 	 */
 	public PriorityList(Customer customer, int priority) {
-		super();
 		this.customer = customer;
 		this.priority = priority;
 	}
@@ -49,7 +31,7 @@ public class PriorityList implements Comparable<PriorityList>{
 	}
 
 	/**
-	 * @param customer the customer to set
+	 * @param customer to set
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
@@ -63,7 +45,7 @@ public class PriorityList implements Comparable<PriorityList>{
 	}
 	
 	/**
-	 * @return the priority
+	 * @return string of int priority
 	 */
 	public String getPriorityValue() {
 		String s = String.valueOf(priority);
@@ -71,7 +53,7 @@ public class PriorityList implements Comparable<PriorityList>{
 	}
 
 	/**
-	 * @param priority the priority to set
+	 * @param priority to set
 	 */
 	public void setPriority(int priority) {
 		this.priority = priority;
@@ -80,7 +62,6 @@ public class PriorityList implements Comparable<PriorityList>{
 	// Compare priority using implement for Customer class for Priority Queue
 	@Override
 	public int compareTo(PriorityList p) {
-		// TODO Auto-generated method stub
 		return p.priority < this.priority? 1: -1;
 	}
 }
